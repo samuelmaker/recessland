@@ -7,7 +7,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0091CE">
-<title>Recessland - Flappy Recess</title>
+<meta property="og:title" content="Recess Land Giveaway">
+<meta property="og:description" content="Play now — highest score wins 2 FREE tickets to Recessland! 23-24 May 2026, Dreamland Margate.">
+<meta property="og:type" content="website">
+<meta name="description" content="Play now — highest score wins 2 FREE tickets to Recessland! 23-24 May 2026, Dreamland Margate.">
+<title>Recess Land Giveaway</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -924,10 +928,10 @@
   }
 
   function shareScore() {
-    const text = 'I scored ' + score + ' on Flappy Recess! Can you beat me? \uD83C\uDFA1 Play now and win 2 FREE tickets to Recessland!';
+    const text = 'I scored ' + score + ' on Recess Land Giveaway! Can you beat me? \uD83C\uDFA1 Play now and win 2 FREE tickets to Recessland!';
     const url = 'https://www.recess.land';
     if (navigator.share) {
-      navigator.share({ title: 'Flappy Recess', text: text, url: url }).catch(() => {});
+      navigator.share({ title: 'Recess Land Giveaway', text: text, url: url }).catch(() => {});
     } else {
       // Fallback: copy to clipboard
       navigator.clipboard.writeText(text + ' ' + url).then(() => {
