@@ -881,27 +881,30 @@
 
     // Big buttons
     const btnW = Math.min(W * 0.8, 300);
-    const btnH = 54;
+    const btnH = 58;
+    const btnGap = 24;
     const btnX = W/2 - btnW/2;
 
     // RUN IT BACK button
-    const retryY = H * 0.52;
+    const retryY = H * 0.50;
     drawPixelRect(btnX, retryY, btnW, btnH, COL.red);
     drawPixelRect(btnX + 3, retryY + 3, btnW - 6, btnH - 6, COL.redDark);
     drawPixelRect(btnX + 6, retryY + 6, btnW - 12, btnH - 12, COL.red);
     ctx.font = '14px "Press Start 2P", monospace';
     ctx.fillStyle = COL.white;
-    ctx.fillText('RUN IT BACK', W/2, retryY + btnH/2 + 5);
+    ctx.textBaseline = 'middle';
+    ctx.fillText('RUN IT BACK', W/2, retryY + btnH/2);
     retryBtn = { x: btnX, y: retryY, w: btnW, h: btnH };
 
     // SHARE WITH A FRIEND button
-    const shareY = H * 0.62;
+    const shareY = retryY + btnH + btnGap;
     drawPixelRect(btnX, shareY, btnW, btnH, COL.cloudShadow);
     drawPixelRect(btnX + 3, shareY + 3, btnW - 6, btnH - 6, '#0077B6');
     drawPixelRect(btnX + 6, shareY + 6, btnW - 12, btnH - 12, COL.cloudShadow);
     ctx.font = '10px "Press Start 2P", monospace';
     ctx.fillStyle = COL.white;
-    ctx.fillText('SHARE WITH A FRIEND', W/2, shareY + btnH/2 + 4);
+    ctx.fillText('SHARE WITH A FRIEND', W/2, shareY + btnH/2);
+    ctx.textBaseline = 'alphabetic';
     shareBtn = { x: btnX, y: shareY, w: btnW, h: btnH };
 
     // Prize text — clear
