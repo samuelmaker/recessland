@@ -948,7 +948,7 @@
       return;
     }
     if (state === 'gameover') {
-      if (Date.now() - gameoverTime < 2000) return;
+      if (Date.now() - gameoverTime < 750) return;
       state = 'start';
       initGame();
       return;
@@ -997,7 +997,7 @@
         topH = mid + (Math.random() - 0.5) * 100;
       }
       topH = Math.max(minTop, Math.min(maxTop, topH));
-      const spawnX = !lastPipe ? W * 0.6 : W + PIPE_WIDTH + 20;
+      const spawnX = !lastPipe ? W + PIPE_WIDTH : W + PIPE_WIDTH + 20;
       pipes.push({ x: spawnX, topH: topH, bottomY: topH + PIPE_GAP, scored: false });
     }
 
@@ -1131,7 +1131,7 @@
   function handleInput(e) {
     e.preventDefault();
     if (state === 'gameover') {
-      if (Date.now() - gameoverTime < 2000) return;
+      if (Date.now() - gameoverTime < 750) return;
       const pos = getEventPos(e);
       if (hitTest(pos, retryBtn)) {
         state = 'start';
