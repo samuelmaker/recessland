@@ -14,12 +14,12 @@ export const PLAYER_H = 64;
 export const PLAYER_Y = BASE_H - 140;
 
 // Scrolling speed (px per frame at 60fps)
-export const INITIAL_SPEED = 7;
-export const MAX_SPEED = 10;
+export const INITIAL_SPEED = 8;
+export const MAX_SPEED = 12;
 export const SPEED_RAMP_SECONDS = 120;
 
 // Obstacles (cars)
-export const OBSTACLE_SPAWN_INTERVAL_START = 80;
+export const OBSTACLE_SPAWN_INTERVAL_START = 60;
 export const OBSTACLE_SPAWN_INTERVAL_MIN = 28;
 export const OBSTACLE_TYPES = ['sedan', 'truck', 'sports', 'van'];
 
