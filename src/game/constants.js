@@ -26,7 +26,7 @@ export const OBSTACLE_TYPES = ['sedan', 'truck', 'sports', 'van'];
 // Obstacle lane changing
 export const LANE_CHANGE_CHANCE = 0.005; // per-frame probability
 export const LANE_CHANGE_FRAMES = 20;
-export const LANE_CHANGE_MIN_DIST_FROM_PLAYER = 220; // px — won't change lane if closer than this to player
+export const LANE_CHANGE_MIN_DIST_FROM_PLAYER = 300; // px — won't change lane if closer than this to player
 
 // Lane switch (player)
 export const LANE_SWITCH_FRAMES = 8;

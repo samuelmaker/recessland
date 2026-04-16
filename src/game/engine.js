@@ -274,23 +274,11 @@ function spawnObstacle(progress) {
   const type = typePool[Math.floor(Math.random() * typePool.length)];
   obstacles.push(createObstacle(type, lane, -80));
 
-  // Sometimes spawn a second car (earlier and more often)
+  // Sometimes spawn a second car (always leave at least one lane open)
   if (progress > 0.2 && Math.random() < 0.55) {
     let lane2 = (lane + (Math.random() < 0.5 ? 1 : 2)) % LANE_COUNT;
     const type2 = typePool[Math.floor(Math.random() * typePool.length)];
     obstacles.push(createObstacle(type2, lane2, -80));
-
-    // Sometimes spawn a third car (all lanes blocked)
-    if (progress > 0.5 && Math.random() < 0.25) {
-      const usedLanes = new Set([lane, lane2]);
-      for (let l = 0; l < LANE_COUNT; l++) {
-        if (!usedLanes.has(l)) {
-          const type3 = typePool[Math.floor(Math.random() * typePool.length)];
-          obstacles.push(createObstacle(type3, l, -80));
-          break;
-        }
-      }
-    }
   }
 }
 
