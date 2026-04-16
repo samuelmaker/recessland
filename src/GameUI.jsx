@@ -75,8 +75,18 @@ export const GameUI = () => {
         <div className="screen start-screen">
           <div className="screen-content">
             <div className="title-blocks">
-              {'ROAD 2 RECESSLAND'.split('').map((ch, i) => (
-                <span key={i} className="title-char">{ch === ' ' ? '\u00A0' : ch}</span>
+              {'ROAD'.split('').map((ch, i) => (
+                <span key={`r${i}`} className="title-char">{ch}</span>
+              ))}
+            </div>
+            <div className="title-blocks">
+              {'2'.split('').map((ch, i) => (
+                <span key={`t${i}`} className="title-char">{ch}</span>
+              ))}
+            </div>
+            <div className="title-blocks">
+              {'RECESSLAND'.split('').map((ch, i) => (
+                <span key={`l${i}`} className="title-char">{ch}</span>
               ))}
             </div>
             <div className="subtitle">SUMMER STARTS HERE</div>
