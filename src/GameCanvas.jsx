@@ -27,6 +27,8 @@ export const GameCanvas = () => {
       startGame();
     } else if (gameState === 'start') {
       startAttractMode();
+    } else if (gameState === 'finished') {
+      // Keep the canvas running but no more input
     }
   }, [gameState]);
 

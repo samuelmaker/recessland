@@ -20,20 +20,24 @@ export const GameUI = () => {
   }, [startGame]);
 
   const handleShare = useCallback(() => {
-    const text = `I dodged ${score}m on Recess Land Racer! Can you beat me? Play now and win 2 FREE tickets to Recessland!`;
+    const verb = gameState === 'finished' ? 'completed' : 'dodged';
+    const text = `I ${verb} ${score}m on Road 2 Recessland! Can you beat me? Play now and win 2 FREE tickets to Recessland!`;
     const url = 'https://www.recess.land';
     if (navigator.share) {
-      navigator.share({ title: 'Recess Land Giveaway', text, url }).catch(() => {});
+      navigator.share({ title: 'Road 2 Recessland', text, url }).catch(() => {});
     } else {
       navigator.clipboard.writeText(text + ' ' + url).then(() => {}).catch(() => {});
     }
-  }, [score]);
+  }, [score, gameState]);
 
   // Stop music + play crash on game over
   useEffect(() => {
     if (gameState === 'gameover') {
       stopMusic();
       playCrash();
+    }
+    if (gameState === 'finished') {
+      stopMusic();
     }
   }, [gameState]);
 
@@ -44,7 +48,7 @@ export const GameUI = () => {
         if (gameState === 'start') {
           e.preventDefault();
           handleStart();
-        } else if (gameState === 'gameover') {
+        } else if (gameState === 'gameover' || gameState === 'finished') {
           e.preventDefault();
           handleRestart();
         }
@@ -71,8 +75,8 @@ export const GameUI = () => {
         <div className="screen start-screen">
           <div className="screen-content">
             <div className="title-blocks">
-              {'RECESSLAND'.split('').map((ch, i) => (
-                <span key={i} className="title-char">{ch}</span>
+              {'ROAD 2 RECESSLAND'.split('').map((ch, i) => (
+                <span key={i} className="title-char">{ch === ' ' ? '\u00A0' : ch}</span>
               ))}
             </div>
             <div className="subtitle">SUMMER STARTS HERE</div>
@@ -104,6 +108,39 @@ export const GameUI = () => {
         <div className="screen gameover-screen">
           <div className="screen-content">
             <div className="gameover-title">CRASHED!</div>
+
+            <div className="score-label">DISTANCE</div>
+            <div className="score-big">{score}m</div>
+
+            <div className="best-score">BEST: {bestScore}m</div>
+
+            {score >= bestScore && score > 0 && (
+              <div className="new-best">NEW BEST!</div>
+            )}
+
+            <button className="btn-retry" onClick={handleRestart}>
+              RUN IT BACK
+            </button>
+
+            <button className="btn-share" onClick={handleShare}>
+              SHARE WITH A FRIEND
+            </button>
+
+            <div className="prize-footer">
+              <div className="prize-footer-top">HIGHEST SCORE WINS</div>
+              <div className="prize-footer-bottom">2 FREE TICKETS!</div>
+            </div>
+
+            <div className="recess-link">RECESS.LAND</div>
+          </div>
+        </div>
+      )}
+
+      {/* Finish Screen */}
+      {gameState === 'finished' && (
+        <div className="screen gameover-screen">
+          <div className="screen-content">
+            <div className="finish-title">YOU MADE IT!</div>
 
             <div className="score-label">DISTANCE</div>
             <div className="score-big">{score}m</div>

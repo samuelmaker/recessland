@@ -7,6 +7,7 @@ import {
   LANE_CHANGE_CHANCE, LANE_CHANGE_FRAMES, LANE_CHANGE_MIN_DIST_FROM_PLAYER,
   PLAYER_Y,
   DECO_SPAWN_INTERVAL,
+  FINISH_TIME,
 } from './constants.js';
 import { consumeInput } from './input.js';
 import {
@@ -31,6 +32,8 @@ let frameCount = 0;
 let spawnTimer = 0;
 let decoTimer = 0;
 let gameOver = false;
+let finished = false;
+let finishLineY = -9999;
 let immuneFrames = 0;
 let attractMode = false;
 
@@ -57,6 +60,8 @@ export function startGame() {
   spawnTimer = 0;
   decoTimer = 0;
   gameOver = false;
+  finished = false;
+  finishLineY = -9999;
   immuneFrames = 90;
   attractMode = false;
 }
@@ -121,6 +126,23 @@ function update(dt) {
   distance += speed * dt * 0.3;
   if (storeRef) storeRef.getState().setDistance(distance);
 
+  // Finish line — spawn it when time is nearly up
+  if (!finished && elapsed >= FINISH_TIME - 3 && finishLineY < -9000) {
+    finishLineY = -40; // spawn above screen
+  }
+  // Scroll finish line down
+  if (finishLineY > -9000) {
+    finishLineY += speed * dt * 0.85;
+    // Player crosses the finish line
+    if (!finished && player && finishLineY >= PLAYER_Y) {
+      finished = true;
+      gameOver = true;
+      setTimeout(() => {
+        if (storeRef) storeRef.getState().finishGame();
+      }, 500);
+    }
+  }
+
   // Immunity countdown
   if (immuneFrames > 0) immuneFrames -= dt;
 
@@ -164,7 +186,7 @@ function update(dt) {
   for (const obs of obstacles) {
     // Obstacle cars scroll down — player approaches them from behind
     // The speed multiplier decreases over time so player gains on them faster
-    const obsSpeedMult = 0.9 - progress * 0.15; // 0.9 → 0.75 over time
+    const obsSpeedMult = 0.8 - progress * 0.25; // 0.8 → 0.55 over time
     obs.y += speed * dt * obsSpeedMult;
 
     // Lane changing AI
@@ -183,10 +205,10 @@ function update(dt) {
         const dir = Math.random() < 0.5 ? -1 : 1;
         const newLane = obs.lane + dir;
         if (newLane >= 0 && newLane < LANE_COUNT) {
-          // Check if new lane is clear of nearby obstacles
+          // Check if new lane is clear of nearby obstacles (including those mid-switch)
           const clear = !obstacles.some(other =>
             other !== obs &&
-            other.lane === newLane &&
+            (other.lane === newLane || (other.switchTimer > 0 && other.targetLane === newLane)) &&
             Math.abs(other.y - obs.y) < 100
           );
           if (clear) {
@@ -239,25 +261,36 @@ function updateDecorations(dt) {
 
 function spawnObstacle(progress) {
   const lane = Math.floor(Math.random() * LANE_COUNT);
-  const types = ['sedan', 'truck', 'sports', 'van'];
 
-  // Bias toward more trucks/vans later (harder to dodge)
+  // Harder type pool — trucks/vans dominate earlier
   let typePool;
-  if (progress < 0.3) {
-    typePool = ['sedan', 'sedan', 'sports', 'van'];
-  } else if (progress < 0.6) {
+  if (progress < 0.2) {
+    typePool = ['sedan', 'sedan', 'sports', 'sedan'];
+  } else if (progress < 0.4) {
     typePool = ['sedan', 'truck', 'sports', 'van'];
   } else {
-    typePool = ['truck', 'truck', 'van', 'sports'];
+    typePool = ['truck', 'truck', 'van', 'van'];
   }
   const type = typePool[Math.floor(Math.random() * typePool.length)];
   obstacles.push(createObstacle(type, lane, -80));
 
-  // Sometimes spawn a second car
-  if (progress > 0.5 && Math.random() < 0.3) {
+  // Sometimes spawn a second car (earlier and more often)
+  if (progress > 0.2 && Math.random() < 0.55) {
     let lane2 = (lane + (Math.random() < 0.5 ? 1 : 2)) % LANE_COUNT;
     const type2 = typePool[Math.floor(Math.random() * typePool.length)];
     obstacles.push(createObstacle(type2, lane2, -80));
+
+    // Sometimes spawn a third car (all lanes blocked)
+    if (progress > 0.5 && Math.random() < 0.25) {
+      const usedLanes = new Set([lane, lane2]);
+      for (let l = 0; l < LANE_COUNT; l++) {
+        if (!usedLanes.has(l)) {
+          const type3 = typePool[Math.floor(Math.random() * typePool.length)];
+          obstacles.push(createObstacle(type3, l, -80));
+          break;
+        }
+      }
+    }
   }
 }
 
@@ -326,7 +359,7 @@ function render(ctx, canvas) {
   const offsetY = (containerH - BASE_H * scale) / 2;
 
   // Letterbox
-  ctx.fillStyle = '#050510';
+  ctx.fillStyle = '#0d0d30';
   ctx.fillRect(0, 0, containerW, containerH);
 
   ctx.save();
@@ -344,8 +377,31 @@ function render(ctx, canvas) {
     if (obs.active) drawCar(ctx, obs, false);
   }
 
+  // Finish line
+  if (finishLineY > -9000) {
+    const flY = finishLineY;
+    // Checkerboard pattern
+    const sqSize = 10;
+    const cols = Math.ceil(ROAD_WIDTH / sqSize);
+    for (let c = 0; c < cols; c++) {
+      for (let r = 0; r < 2; r++) {
+        ctx.fillStyle = (c + r) % 2 === 0 ? '#FFFFFF' : '#111111';
+        ctx.fillRect(ROAD_LEFT + c * sqSize, flY - sqSize * 2 + r * sqSize, sqSize, sqSize);
+      }
+    }
+    // "FINISH" text
+    ctx.fillStyle = '#FFD700';
+    ctx.font = 'bold 14px "Press Start 2P", monospace';
+    ctx.textAlign = 'center';
+    ctx.shadowColor = '#FF8800';
+    ctx.shadowBlur = 10;
+    ctx.fillText('FINISH', BASE_W / 2, flY - sqSize * 2 - 8);
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+  }
+
   // Player
-  if (player && !gameOver) {
+  if (player && (!gameOver || finished)) {
     drawPlayer(ctx, player, frameCount, immuneFrames > 0);
   }
 

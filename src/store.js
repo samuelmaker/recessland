@@ -32,4 +32,18 @@ export const useGameStore = create((set, get) => ({
       bestScore: newBest ? finalScore : state.bestScore,
     });
   },
+
+  finishGame: () => {
+    const state = get();
+    const finalScore = Math.floor(state.distance);
+    const newBest = finalScore > state.bestScore;
+    if (newBest) {
+      localStorage.setItem('recessland_best', finalScore.toString());
+    }
+    set({
+      gameState: 'finished',
+      score: finalScore,
+      bestScore: newBest ? finalScore : state.bestScore,
+    });
+  },
 }));

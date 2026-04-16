@@ -14,27 +14,30 @@ export const PLAYER_H = 64;
 export const PLAYER_Y = BASE_H - 140;
 
 // Scrolling speed (px per frame at 60fps)
-export const INITIAL_SPEED = 8;
-export const MAX_SPEED = 12;
-export const SPEED_RAMP_SECONDS = 120;
+export const INITIAL_SPEED = 9;
+export const MAX_SPEED = 20;
+export const SPEED_RAMP_SECONDS = 60;
 
 // Obstacles (cars)
-export const OBSTACLE_SPAWN_INTERVAL_START = 60;
-export const OBSTACLE_SPAWN_INTERVAL_MIN = 28;
+export const OBSTACLE_SPAWN_INTERVAL_START = 50;
+export const OBSTACLE_SPAWN_INTERVAL_MIN = 22;
 export const OBSTACLE_TYPES = ['sedan', 'truck', 'sports', 'van'];
 
 // Obstacle lane changing
-export const LANE_CHANGE_CHANCE = 0.003; // per-frame probability
+export const LANE_CHANGE_CHANCE = 0.005; // per-frame probability
 export const LANE_CHANGE_FRAMES = 20;
-export const LANE_CHANGE_MIN_DIST_FROM_PLAYER = 250; // px — won't change lane if closer than this to player
+export const LANE_CHANGE_MIN_DIST_FROM_PLAYER = 220; // px — won't change lane if closer than this to player
 
 // Lane switch (player)
 export const LANE_SWITCH_FRAMES = 8;
 
+// Finish line (seconds)
+export const FINISH_TIME = 120;
+
 // Decoration spawn
 export const DECO_SPAWN_INTERVAL = 90;
 
-// Night funfair color palette
+// Evening seaside color palette
 export const COL = {
   red: '#C0634A',
   redDark: '#9E4F3A',
@@ -42,13 +45,13 @@ export const COL = {
   blueDark: '#006B9E',
   cream: '#F0E6D6',
   gold: '#FFD700',
-  sky: '#0a0a2e',
-  skyLight: '#1a1a3e',
+  sky: '#1a1a5e',
+  skyLight: '#FF7744',
   road: '#333333',
   roadDark: '#2a2a2a',
   roadLine: '#FFDD44',
-  ground: '#1a1510',
-  groundLight: '#2a2218',
+  ground: '#2d7a1e',
+  groundLight: '#3a8828',
   groundPath: '#302820',
   white: '#FFFFFF',
   black: '#1a1a1a',
