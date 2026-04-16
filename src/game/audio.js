@@ -3,9 +3,9 @@ bgMusic.loop = true;
 bgMusic.volume = 0;
 bgMusic.preload = 'auto';
 
-const crashSound = new Audio('/oh.mp3');
-crashSound.volume = 0.25;
-crashSound.preload = 'auto';
+const crashSounds = [new Audio('/oh.mp3'), new Audio('/fah.mp3')];
+crashSounds.forEach(s => { s.volume = 0.25; s.preload = 'auto'; });
+let crashIndex = 0;
 
 let musicStarted = false;
 
@@ -34,7 +34,8 @@ export function stopMusic() {
 }
 
 export function playCrash() {
-  const s = crashSound.cloneNode();
+  const s = crashSounds[crashIndex].cloneNode();
   s.volume = 0.25;
   s.play().catch(() => {});
+  crashIndex = (crashIndex + 1) % crashSounds.length;
 }
