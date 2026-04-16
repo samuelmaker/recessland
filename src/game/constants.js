@@ -14,8 +14,8 @@ export const PLAYER_H = 64;
 export const PLAYER_Y = BASE_H - 140;
 
 // Scrolling speed (px per frame at 60fps)
-export const INITIAL_SPEED = 5.5;
-export const MAX_SPEED = 9;
+export const INITIAL_SPEED = 7;
+export const MAX_SPEED = 10;
 export const SPEED_RAMP_SECONDS = 120;
 
 // Obstacles (cars)
