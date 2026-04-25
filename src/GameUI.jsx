@@ -249,19 +249,6 @@ export const GameUI = () => {
             <div className="prize-bottom">2 FREE TICKETS!</div>
           </div>
 
-          <div className="start-middle">
-            <div className="start-card start-card-left">
-              <div className="start-card-icon">🏆</div>
-              <div className="start-card-title">HIGH SCORE</div>
-              <div className="start-card-value">{String(bestScore).padStart(6, '0')}</div>
-            </div>
-            <div className="start-card start-card-right">
-              <div className="start-card-icon">📖</div>
-              <div className="start-card-title">HOW TO</div>
-              <div className="start-card-sub">PLAY</div>
-            </div>
-          </div>
-
           <button className="btn-start" onClick={handleStart}>
             <span className="btn-flag" aria-hidden>🏁</span>
             TAP TO START
