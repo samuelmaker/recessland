@@ -1106,6 +1106,151 @@
   letter-spacing: 2px;
 }
 
+/* ============ LEADERBOARD ============ */
+.leaderboard {
+  width: min(320px, 80vw);
+  margin: 4px auto 8px;
+  padding: 8px 12px 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 2px solid rgba(141, 208, 245, 0.4);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.leaderboard-label {
+  font-size: clamp(9px, 2.2vw, 11px);
+  color: #FFE455;
+  letter-spacing: 3px;
+  margin-bottom: 6px;
+  text-shadow: 0 0 6px rgba(255, 228, 85, 0.5);
+}
+
+.leaderboard-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  font-size: clamp(10px, 2.4vw, 12px);
+  color: #F0E6D6;
+  letter-spacing: 1px;
+}
+
+.lb-rank {
+  color: #FFE455;
+  font-weight: bold;
+  text-align: left;
+}
+
+.lb-name {
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lb-score {
+  font-variant-numeric: tabular-nums;
+  color: #8DD0F5;
+}
+
+/* ============ SAVE SCORE FORM ============ */
+.save-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 4px;
+  width: min(320px, 80vw);
+}
+
+.save-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: clamp(12px, 3vw, 14px);
+  letter-spacing: 2px;
+  text-align: center;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.4);
+  color: #F0E6D6;
+  border: 2px solid rgba(141, 208, 245, 0.5);
+  border-radius: 6px;
+  outline: none;
+}
+
+.save-input:focus {
+  border-color: #FFE455;
+  box-shadow: 0 0 10px rgba(255, 228, 85, 0.5);
+}
+
+.btn-save {
+  padding: 10px 20px;
+  font-family: inherit;
+  font-size: clamp(11px, 2.8vw, 13px);
+  letter-spacing: 2px;
+  background: #FFE455;
+  color: #1a1a1a;
+  border: 2px solid #1a1a1a;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 0 #C0A030;
+}
+
+.btn-save:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #C0A030;
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.save-error {
+  font-size: clamp(9px, 2.2vw, 11px);
+  color: #FF6B6B;
+  letter-spacing: 1px;
+}
+
+.save-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0;
+  width: min(320px, 80vw);
+}
+
+.rank-badge {
+  font-size: clamp(16px, 4.2vw, 22px);
+  letter-spacing: 3px;
+  color: #FFE455;
+  text-shadow: 0 0 12px rgba(255, 228, 85, 0.6);
+  font-weight: bold;
+}
+
+.social-cta {
+  font-size: clamp(10px, 2.4vw, 12px);
+  color: #F0E6D6;
+  text-align: center;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+}
+
+.social-cta strong {
+  color: #8DD0F5;
+}
+
 /* ============ REDUCED MOTION ============ */
 @media (prefers-reduced-motion: reduce) {
   .end-title-finish,

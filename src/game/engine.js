@@ -191,7 +191,9 @@ function update(dt) {
       gameOver = true;
       celebration = createCelebration();
       setTimeout(() => {
-        if (storeRef) storeRef.getState().finishGame();
+        if (!storeRef) return;
+        storeRef.getState().updateHud({ durationMs: Math.round(elapsed * 1000) });
+        storeRef.getState().finishGame();
       }, CELEBRATION_DURATION);
     }
   }
@@ -504,7 +506,9 @@ function triggerGameOver(obs) {
   };
 
   setTimeout(() => {
-    if (storeRef) storeRef.getState().endGame();
+    if (!storeRef) return;
+    storeRef.getState().updateHud({ durationMs: Math.round(elapsed * 1000) });
+    storeRef.getState().endGame();
   }, 500);
 }
 

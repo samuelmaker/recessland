@@ -38,3 +38,36 @@ Defined in `COL` object — uses Recessland brand colors (red `#C0634A`, sky blu
 - `index.html` — the entire game
 - `background.mp3` — looping background music
 - `oh.mp3` — death sound effect
+
+## Leaderboard / Score Persistence
+
+A serverless leaderboard runs on Vercel + Upstash Redis (Vercel KV-compatible). Players submit a score with a name on the end screen; the user cross-references screenshots tagged `@rec_ess` against this server-side record to detect Photoshopped scores.
+
+### API routes (in `api/`)
+
+- `POST /api/start-run` → `{ runId, nonce }`. Creates `run:<runId>` hash with `state: 'started'`, single-use nonce (30-min TTL).
+- `POST /api/submit-score` → body `{ runId, name, score, tickets, distance, durationMs, sig }`. Server verifies HMAC-SHA256 with the nonce as key, checks soft caps, and rejects if `score !== floor(distance) + tickets * 100`. On success: writes the run, `ZADD`s `leaderboard`, returns `{ ok, rank }`. Rate-limited 5/min/IP.
+- `GET /api/leaderboard?limit=3` → top N entries `[{ rank, name, score }]` (15s cache).
+- `GET /api/admin/runs?key=<ADMIN_KEY>&name=<lowercase>` → full run records for screenshot cross-referencing. `name` filter is optional; without it returns the top 50 by score.
+
+### Env vars (set in Vercel)
+
+- `KV_REST_API_URL`, `KV_REST_API_TOKEN` — auto-injected when an Upstash KV store is attached in the Vercel dashboard.
+- `LEADERBOARD_SECRET` — long random string. Salts the IP hash; required (server returns 500 if missing).
+- `ADMIN_KEY` — long random string. Required to access `/api/admin/runs`.
+
+### Cross-referencing a screenshot
+
+```
+curl "https://<your-vercel-url>/api/admin/runs?key=$ADMIN_KEY&name=alex"
+```
+
+Returns all submitted runs for that name (newest first), each with `score`, `tickets`, `distance`, `durationMs`, `finishedAt`. If a tweeted screenshot's score doesn't match any row for that name, it's fake.
+
+### Anti-tamper model
+
+- Two-phase flow: client must call `/api/start-run` first to obtain a server-issued nonce. The nonce is the HMAC key for both client signing and server verification.
+- Soft caps reject impossible runs (duration outside [5s, 180s], distance > duration × 0.13, tickets > duration / 500ms).
+- Killer check: `score === floor(distance) + tickets × 100` is verified server-side, so tampering any one field breaks the formula.
+- Single-use: a run's `state` flips to `submitted` after success, so the same nonce can't be replayed.
+- Rate limit: 5 submits/min per hashed IP.
