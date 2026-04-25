@@ -1,18 +1,6 @@
-import { useGameStore } from "./store";
+import { useGameStore, computeScore } from "./store";
 import { useEffect, useCallback, useState } from "react";
 import { startMusic, stopMusic, playCrash } from "./game/audio.js";
-
-const MARQUEE_LETTERS = 'RECESSLAND'.split('');
-
-function MarqueeTitle({ size = 'lg' }) {
-  return (
-    <div className={`marquee marquee-${size}`}>
-      {MARQUEE_LETTERS.map((ch, i) => (
-        <span key={i} className="marquee-tile">{ch}</span>
-      ))}
-    </div>
-  );
-}
 
 function MarqueeRow({ text, size = 'xl' }) {
   return (
@@ -31,22 +19,17 @@ function comboMood(combo) {
   return 'GO!';
 }
 
-function formatDistanceKm(distanceM) {
-  const km = distanceM / 1000;
-  return km.toFixed(2) + ' KM';
-}
-
-function formatTickets(n) {
-  return String(n).padStart(5, '0');
+function formatScore(n) {
+  return String(Math.max(0, Math.floor(n))).padStart(6, '0');
 }
 
 export const GameUI = () => {
   const gameState = useGameStore(s => s.gameState);
   const score = useGameStore(s => s.score);
   const bestScore = useGameStore(s => s.bestScore);
-  const bestTickets = useGameStore(s => s.bestTickets);
   const distance = useGameStore(s => s.distance);
   const tickets = useGameStore(s => s.tickets);
+  const liveScore = computeScore(distance, tickets);
   const combo = useGameStore(s => s.combo);
   const comboTimer = useGameStore(s => s.comboTimer);
   const nitro = useGameStore(s => s.nitro);
@@ -72,14 +55,14 @@ export const GameUI = () => {
 
   const handleShare = useCallback(() => {
     const verb = gameState === 'finished' ? 'completed' : 'raced through';
-    const text = `I ${verb} Recessland and grabbed ${tickets} tickets! Can you beat me? Play now and win 2 FREE tickets to Recessland!`;
+    const text = `I ${verb} Recessland with a score of ${score}! Can you beat me? Play now and win 2 FREE tickets to Recessland!`;
     const url = 'https://www.recess.land';
     if (navigator.share) {
       navigator.share({ title: 'Recessland Arcade Racing', text, url }).catch(() => {});
     } else {
       navigator.clipboard.writeText(text + ' ' + url).then(() => {}).catch(() => {});
     }
-  }, [tickets, gameState]);
+  }, [score, gameState]);
 
   // Stop music + play crash on game over
   useEffect(() => {
@@ -127,21 +110,11 @@ export const GameUI = () => {
       {/* ──────── PLAYING HUD ──────── */}
       {gameState === 'playing' && (
         <>
-          {/* Top bar */}
-          <div className="hud-top">
-            <div className="top-tickets">
-              <span className="ticket-icon" aria-hidden>🎫</span>
-              <div className="top-tickets-col">
-                <div className="top-label">TICKETS</div>
-                <div className="top-value">{formatTickets(tickets)}</div>
-              </div>
-            </div>
-            <div className="top-marquee">
-              <MarqueeTitle size="sm" />
-            </div>
-            <div className="top-distance">
-              <div className="top-label">DISTANCE</div>
-              <div className="top-value">{formatDistanceKm(distance)}</div>
+          {/* Top bar — single unified score */}
+          <div className="hud-top hud-top-score">
+            <div className="top-score">
+              <div className="top-label">SCORE</div>
+              <div className="top-score-value">{formatScore(liveScore)}</div>
             </div>
           </div>
 
@@ -226,11 +199,11 @@ export const GameUI = () => {
       {gameState === 'start' && (
         <div className="screen start-screen">
           <div className="start-top">
-            <div className="start-tickets">
-              <span className="ticket-icon" aria-hidden>🎫</span>
+            <div className="start-best">
+              <span className="ticket-icon" aria-hidden>🏆</span>
               <div>
-                <div className="top-label">TICKETS</div>
-                <div className="top-value">{formatTickets(bestTickets)}</div>
+                <div className="top-label">BEST SCORE</div>
+                <div className="top-value">{formatScore(bestScore)}</div>
               </div>
             </div>
             <div className="start-date">23<sup>RD</sup> MAY 2026</div>
@@ -266,22 +239,16 @@ export const GameUI = () => {
         <div className="screen end-screen">
           <div className="end-title end-title-crash">CRASHED!</div>
 
-          <div className="end-stats">
-            <div className="end-stat">
-              <div className="end-stat-label">TICKETS</div>
-              <div className="end-stat-value gold">{tickets}</div>
-            </div>
-            <div className="end-stat">
-              <div className="end-stat-label">DISTANCE</div>
-              <div className="end-stat-value">{score}m</div>
-            </div>
+          <div className="end-score">
+            <div className="end-score-label">SCORE</div>
+            <div className="end-score-value">{formatScore(score)}</div>
           </div>
 
-          {tickets >= bestTickets && tickets > 0 && (
+          {score >= bestScore && score > 0 && (
             <div className="new-best">NEW BEST!</div>
           )}
 
-          <div className="best-score">BEST: {bestTickets} tickets • {bestScore}m</div>
+          <div className="best-score">BEST: {formatScore(bestScore)}</div>
 
           <button className="btn-retry" onClick={handleRestart}>RUN IT BACK</button>
           <button className="btn-share" onClick={handleShare}>SHARE WITH A FRIEND</button>
@@ -299,22 +266,16 @@ export const GameUI = () => {
         <div className="screen end-screen">
           <div className="end-title end-title-finish">YOU MADE IT!</div>
 
-          <div className="end-stats">
-            <div className="end-stat">
-              <div className="end-stat-label">TICKETS</div>
-              <div className="end-stat-value gold">{tickets}</div>
-            </div>
-            <div className="end-stat">
-              <div className="end-stat-label">DISTANCE</div>
-              <div className="end-stat-value">{score}m</div>
-            </div>
+          <div className="end-score">
+            <div className="end-score-label">SCORE</div>
+            <div className="end-score-value">{formatScore(score)}</div>
           </div>
 
-          {tickets >= bestTickets && tickets > 0 && (
+          {score >= bestScore && score > 0 && (
             <div className="new-best">NEW BEST!</div>
           )}
 
-          <div className="best-score">BEST: {bestTickets} tickets • {bestScore}m</div>
+          <div className="best-score">BEST: {formatScore(bestScore)}</div>
 
           <button className="btn-retry" onClick={handleRestart}>RUN IT BACK</button>
           <button className="btn-share" onClick={handleShare}>SHARE WITH A FRIEND</button>

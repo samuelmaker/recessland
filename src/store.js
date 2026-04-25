@@ -4,7 +4,11 @@ import {
 } from "./game/constants.js";
 
 const bestScoreFromStorage = parseInt(localStorage.getItem('recessland_best') || '0');
-const bestTicketsFromStorage = parseInt(localStorage.getItem('recessland_best_tickets') || '0');
+
+// Score formula: 1 point per metre + 100 points per ticket.
+export const TICKET_SCORE_VALUE = 100;
+export const computeScore = (distance, tickets) =>
+  Math.floor(distance) + tickets * TICKET_SCORE_VALUE;
 
 export const useGameStore = create((set, get) => ({
   gameState: 'start',
@@ -19,7 +23,6 @@ export const useGameStore = create((set, get) => ({
 
   // HUD
   tickets: 0,
-  bestTickets: bestTicketsFromStorage,
   combo: 0,
   comboTimer: 0,           // 0..1 remaining fraction (for bar)
   nitro: 0,                // 0..NITRO_MAX
@@ -56,39 +59,29 @@ export const useGameStore = create((set, get) => ({
 
   endGame: () => {
     const state = get();
-    const finalScore = Math.floor(state.distance);
+    const finalScore = computeScore(state.distance, state.tickets);
     const newBest = finalScore > state.bestScore;
-    const newBestTickets = state.tickets > state.bestTickets;
     if (newBest) {
       localStorage.setItem('recessland_best', finalScore.toString());
-    }
-    if (newBestTickets) {
-      localStorage.setItem('recessland_best_tickets', state.tickets.toString());
     }
     set({
       gameState: 'gameover',
       score: finalScore,
       bestScore: newBest ? finalScore : state.bestScore,
-      bestTickets: newBestTickets ? state.tickets : state.bestTickets,
     });
   },
 
   finishGame: () => {
     const state = get();
-    const finalScore = Math.floor(state.distance);
+    const finalScore = computeScore(state.distance, state.tickets);
     const newBest = finalScore > state.bestScore;
-    const newBestTickets = state.tickets > state.bestTickets;
     if (newBest) {
       localStorage.setItem('recessland_best', finalScore.toString());
-    }
-    if (newBestTickets) {
-      localStorage.setItem('recessland_best_tickets', state.tickets.toString());
     }
     set({
       gameState: 'finished',
       score: finalScore,
       bestScore: newBest ? finalScore : state.bestScore,
-      bestTickets: newBestTickets ? state.tickets : state.bestTickets,
     });
   },
 }));
