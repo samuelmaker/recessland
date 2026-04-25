@@ -631,8 +631,21 @@
 
 /* ============ START SCREEN ============ */
 .start-screen {
-  justify-content: space-between;
-  gap: clamp(20px, 6vw, 40px);
+  justify-content: flex-start;
+  gap: clamp(14px, 4vw, 24px);
+}
+
+.start-screen .start-title {
+  margin-top: clamp(20px, 6vw, 60px);
+}
+
+.start-screen .prize-banner {
+  margin-top: auto;
+  margin-bottom: clamp(16px, 4vw, 28px);
+}
+
+.start-screen .footer-ribbon {
+  margin-top: auto;
 }
 
 .start-top {
@@ -845,16 +858,20 @@
 
 /* ============ END SCREENS ============ */
 .end-screen {
-  justify-content: center;
-  gap: clamp(18px, 4.5vw, 28px);
+  justify-content: flex-start;
+  gap: clamp(14px, 3.5vw, 22px);
+}
+
+.end-screen .end-title {
+  margin-top: clamp(20px, 6vw, 60px);
 }
 
 .end-screen .btn-retry {
-  margin-top: clamp(6px, 2vw, 12px);
+  margin-top: auto;
 }
 
 .end-screen .prize-footer {
-  margin-top: clamp(8px, 2.5vw, 16px);
+  margin-top: auto;
 }
 
 .end-title {
