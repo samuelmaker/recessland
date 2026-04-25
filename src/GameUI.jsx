@@ -14,6 +14,16 @@ function MarqueeTitle({ size = 'lg' }) {
   );
 }
 
+function MarqueeRow({ text, size = 'xl' }) {
+  return (
+    <div className={`marquee marquee-${size}`}>
+      {text.split('').map((ch, i) => (
+        <span key={i} className="marquee-tile">{ch}</span>
+      ))}
+    </div>
+  );
+}
+
 function comboMood(combo) {
   if (combo >= 20) return 'INFERNO!';
   if (combo >= 10) return 'HOT!';
@@ -40,16 +50,12 @@ export const GameUI = () => {
   const combo = useGameStore(s => s.combo);
   const comboTimer = useGameStore(s => s.comboTimer);
   const nitro = useGameStore(s => s.nitro);
-  const nitroMax = useGameStore(s => s.nitroMax);
   const nitroActive = useGameStore(s => s.nitroActive);
   const missionCount = useGameStore(s => s.missionCount);
   const missionTarget = useGameStore(s => s.missionTarget);
   const missionCleared = useGameStore(s => s.missionCleared);
-  const positionRank = useGameStore(s => s.positionRank);
-  const totalRacers = useGameStore(s => s.totalRacers);
   const raceProgress = useGameStore(s => s.raceProgress);
   const rivalProgress = useGameStore(s => s.rivalProgress);
-  const speedKmh = useGameStore(s => s.speedKmh);
   const startGame = useGameStore(s => s.startGame);
 
   const [hintVisible, setHintVisible] = useState(true);
@@ -113,7 +119,6 @@ export const GameUI = () => {
     return () => window.removeEventListener('keydown', handler);
   }, [gameState, handleStart, handleRestart]);
 
-  const nitroPct = Math.max(0, Math.min(1, nitro / nitroMax));
   const comboPct = Math.min(1, combo / 10);
   const missionPct = Math.min(1, missionCount / missionTarget);
 
@@ -175,37 +180,6 @@ export const GameUI = () => {
             </div>
           </div>
 
-          {/* Bottom-left: speed + nitro */}
-          <div className="speed-card">
-            <div className="speed-head">SPEED</div>
-            <div className="speed-value">{speedKmh}</div>
-            <div className="speed-unit">KM/H</div>
-            <div className="nitro-bar">
-              {[...Array(nitroMax)].map((_, i) => (
-                <span
-                  key={i}
-                  className={`nitro-seg ${i < Math.round(nitroPct * nitroMax) ? 'on' : ''}`}
-                />
-              ))}
-              <span className={`nitro-icon ${nitroActive ? 'active' : ''}`} aria-hidden>⚡</span>
-            </div>
-          </div>
-
-          {/* Bottom-right: position */}
-          <div className="position-card">
-            <div className="position-head">POSITION</div>
-            <div className="position-value">
-              <span className="position-num">{positionRank}</span>
-              <span className="position-sep">/</span>
-              <span className="position-total">{totalRacers}</span>
-            </div>
-            <div className="position-checkers">
-              {[...Array(6)].map((_, i) => (
-                <span key={i} className={`checker ${i % 2 === 0 ? 'on' : ''}`} />
-              ))}
-            </div>
-          </div>
-
           {/* Nitro button */}
           <button
             id="nitro-btn"
@@ -216,11 +190,11 @@ export const GameUI = () => {
             <span className="nitro-label">NITRO</span>
           </button>
 
-          {/* Swipe-to-steer hint */}
+          {/* Tap-to-steer hint */}
           {hintVisible && (
             <div className="swipe-hint">
               <span className="swipe-arrow">←</span>
-              <span>SWIPE TO STEER</span>
+              <span>TAP TO STEER</span>
               <span className="swipe-arrow">→</span>
             </div>
           )}
@@ -262,10 +236,17 @@ export const GameUI = () => {
             <div className="start-date">23<sup>RD</sup> MAY 2026</div>
           </div>
 
-          <div className="start-title">
-            <MarqueeTitle size="xl" />
+          <div className="start-title start-title-stack">
+            <MarqueeRow text="ROAD" size="xl" />
+            <MarqueeRow text="2" size="xl" />
+            <MarqueeRow text="RECESSLAND" size="xl" />
             <div className="start-subtitle">ARCADE RACING</div>
             <div className="start-sub-small">FESTIVAL EDITION</div>
+          </div>
+
+          <div className="prize-banner">
+            <div className="prize-top">HIGHEST SCORE WINS</div>
+            <div className="prize-bottom">2 FREE TICKETS!</div>
           </div>
 
           <div className="start-middle">
@@ -288,7 +269,7 @@ export const GameUI = () => {
           </button>
 
           <div className="footer-ribbon">
-            SOUTH LONDON • GOOD VIBES • FAST TIMES
+            MARGATE • 23-24 MAY 2026
           </div>
         </div>
       )}
